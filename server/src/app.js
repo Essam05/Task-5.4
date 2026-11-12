@@ -6,6 +6,8 @@ import authRoutes from './routes/auth.js';
 import bookingRoutes from './routes/bookings.js';
 import userRoutes from './routes/users.js';
 import maintenanceRoutes from './routes/maintenance.js';
+import { requireAuth } from './middleware/auth.js';
+import { generateCsrfToken } from './middleware/csrf.js';
 
 const app = express();
 
@@ -22,6 +24,9 @@ app.use(cookieParser());
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 app.use('/api/auth', authRoutes);
+app.get('/api/csrf-token', requireAuth, (req, res) => {
+  res.json({ csrfToken: generateCsrfToken(req, res) });
+});
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
